@@ -8,9 +8,16 @@ def create_movie_session(
     """
     Create a movie session with the provided parameters.
     """
-    movie = Movie.objects.get(id=movie_id)
-    cinema_hall = CinemaHall.objects.get(id=cinema_hall_id)
-
+    try:
+        movie = Movie.objects.get(id=movie_id)
+    except Movie.DoesNotExist:
+        raise ValueError(f"Movie with id {movie_id} does not exist.")
+    try:
+        cinema_hall = CinemaHall.objects.get(id=cinema_hall_id)
+    except CinemaHall.DoesNotExist:
+        raise ValueError(
+            f"CinemaHall with id {cinema_hall_id} does not exist."
+        )
     return MovieSession.objects.create(
         show_time=movie_show_time, movie=movie, cinema_hall=cinema_hall
     )
@@ -51,7 +58,12 @@ def update_movie_session(
     """
     Update a movie session with the provided parameters.
     """
-    movie_session = MovieSession.objects.get(id=session_id)
+    try:
+        movie_session = MovieSession.objects.get(id=session_id)
+    except MovieSession.DoesNotExist:
+        raise ValueError(
+            f"Movie session with id {session_id} does not exist."
+        )
 
     if show_time:
         movie_session.show_time = show_time
